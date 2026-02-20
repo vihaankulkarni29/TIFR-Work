@@ -47,6 +47,8 @@ gui_frontend (depends on autosim_core and vmd_plugins)
 
 **Zero circular dependencies by design.**
 
+📖 **See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed architectural guidelines and common pitfalls to avoid.**
+
 ## Installation
 
 ### Prerequisites
@@ -95,15 +97,27 @@ python -m gui_frontend.main
 
 ### Running Tests
 
-Test the core simulation engine:
+Test the core simulation engine (isolated, no GUI):
 ```bash
 make test-core
 ```
 
-Test all packages:
+Test VMD plugins (isolated, no GUI):
+```bash
+make test-vmd
+```
+
+Test all packages (GUI tests skipped by default to prevent accidental UI initialization):
 ```bash
 make test-all
 ```
+
+Test GUI explicitly (when needed):
+```bash
+make test-gui
+```
+
+**Note:** Tests are organized in isolated directories to prevent accidental monolith execution. See [ARCHITECTURE.md](ARCHITECTURE.md) for details.
 
 ### Code Quality
 
@@ -134,8 +148,10 @@ Available commands in the Makefile:
 - `make help` - Show all available commands
 - `make install` - Install all dependencies
 - `make run-gui` - Launch the CustomTkinter GUI application
-- `make test-core` - Run pytest on the autosim_core compute engine
-- `make test-all` - Run pytest on all packages
+- `make test-core` - Run pytest on autosim_core (isolated, no GUI)
+- `make test-vmd` - Run pytest on vmd_plugins (isolated, no GUI)
+- `make test-gui` - Run pytest on GUI frontend (explicit GUI tests)
+- `make test-all` - Run pytest on all packages (GUI tests skipped by default)
 - `make lint` - Run ruff linter across all directories
 - `make format` - Format code with ruff and black
 - `make clean` - Remove build artifacts and caches

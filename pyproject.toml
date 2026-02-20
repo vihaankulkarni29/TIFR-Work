@@ -126,11 +126,13 @@ addopts = [
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-report=xml",
+    "-m", "not gui",  # Skip GUI tests by default to avoid accidental UI initialization
 ]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests",
     "unit: marks tests as unit tests",
+    "gui: marks tests that require GUI/display (skipped by default to prevent accidental monolith execution)",
 ]
 
 [tool.coverage.run]

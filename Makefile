@@ -1,4 +1,4 @@
-.PHONY: help install run-gui test-core test-all lint format clean
+.PHONY: help install run-gui test-core test-vmd test-gui test-all lint format clean
 
 # Default target shows available commands
 help:
@@ -8,8 +8,10 @@ help:
 	@echo "Development Commands:"
 	@echo "  make install      - Install all dependencies"
 	@echo "  make run-gui      - Launch the CustomTkinter GUI application"
-	@echo "  make test-core    - Run pytest on the autosim_core compute engine"
-	@echo "  make test-all     - Run pytest on all packages"
+	@echo "  make test-core    - Run pytest on autosim_core (ISOLATED - no GUI)"
+	@echo "  make test-vmd     - Run pytest on vmd_plugins (ISOLATED - no GUI)"
+	@echo "  make test-gui     - Run pytest on GUI frontend (explicit GUI tests)"
+	@echo "  make test-all     - Run pytest on all packages (GUI tests skipped)"
 	@echo "  make lint         - Run ruff linter across all directories"
 	@echo "  make format       - Format code with ruff and black"
 	@echo "  make clean        - Remove build artifacts and caches"
@@ -24,11 +26,19 @@ install:
 run-gui:
 	python -m gui_frontend.main
 
-# Run pytest on the autosim_core compute engine
+# Run pytest on the autosim_core compute engine (ISOLATED - no GUI)
 test-core:
-	pytest tests/ -v -k "autosim_core" --cov=src/autosim_core --cov-report=term-missing
+	pytest tests/autosim_core/ -v --cov=src/autosim_core --cov-report=term-missing
 
-# Run pytest on all packages
+# Run pytest on vmd_plugins (ISOLATED - no GUI)
+test-vmd:
+	pytest tests/vmd_plugins/ -v --cov=src/vmd_plugins --cov-report=term-missing
+
+# Run pytest on GUI (must be explicit to avoid accidental UI initialization)
+test-gui:
+	pytest tests/gui_frontend/ -v -m gui --cov=src/gui_frontend --cov-report=term-missing
+
+# Run pytest on all packages (GUI tests skipped by default)
 test-all:
 	pytest tests/ -v --cov=src --cov-report=term-missing --cov-report=html
 
