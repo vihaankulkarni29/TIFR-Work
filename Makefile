@@ -1,4 +1,4 @@
-.PHONY: help install run-gui test-core test-vmd test-gui test-all lint format clean
+.PHONY: help install run-gui run-hpc-example test-core test-vmd test-gui test-all lint format clean
 
 # Default target shows available commands
 help:
@@ -6,15 +6,16 @@ help:
 	@echo "============================"
 	@echo ""
 	@echo "Development Commands:"
-	@echo "  make install      - Install all dependencies"
-	@echo "  make run-gui      - Launch the CustomTkinter GUI application"
-	@echo "  make test-core    - Run pytest on autosim_core (ISOLATED - no GUI)"
-	@echo "  make test-vmd     - Run pytest on vmd_plugins (ISOLATED - no GUI)"
-	@echo "  make test-gui     - Run pytest on GUI frontend (explicit GUI tests)"
-	@echo "  make test-all     - Run pytest on all packages (GUI tests skipped)"
-	@echo "  make lint         - Run ruff linter across all directories"
-	@echo "  make format       - Format code with ruff and black"
-	@echo "  make clean        - Remove build artifacts and caches"
+	@echo "  make install         - Install all dependencies"
+	@echo "  make run-gui         - Launch the CustomTkinter GUI application"
+	@echo "  make run-hpc-example - Run HPC orchestrator examples (Run 1 & 2)"
+	@echo "  make test-core       - Run pytest on autosim_core (ISOLATED - no GUI)"
+	@echo "  make test-vmd        - Run pytest on vmd_plugins (ISOLATED - no GUI)"
+	@echo "  make test-gui        - Run pytest on GUI frontend (explicit GUI tests)"
+	@echo "  make test-all        - Run pytest on all packages (GUI tests skipped)"
+	@echo "  make lint            - Run ruff linter across all directories"
+	@echo "  make format          - Format code with ruff and black"
+	@echo "  make clean           - Remove build artifacts and caches"
 	@echo ""
 	@echo "Note: On Windows, you may need to install make via chocolatey or use WSL"
 
@@ -83,6 +84,11 @@ dev-setup:
 run-core:
 	@echo "Running autosim_core simulation engine..."
 	python -m autosim_core
+
+# Run HPC orchestrator examples (Run 1 & Run 2)
+run-hpc-example:
+	@echo "Running HPC orchestrator examples..."
+	python -m autosim_core.example_hpc_usage
 
 # Build documentation (if using sphinx or similar)
 docs:

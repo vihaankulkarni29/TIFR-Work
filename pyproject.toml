@@ -35,6 +35,7 @@ core = [
     "numba>=0.57.0",
     "pandas>=2.0.0",
     "h5py>=3.8.0",
+    "MDAnalysis>=2.5.0",
 ]
 
 # Dependencies for vmd_plugins (visualization and VMD integration)
@@ -68,6 +69,7 @@ all = [
     "h5py>=3.8.0",
     "matplotlib>=3.7.0",
     "mdanalysis>=2.5.0",
+    "MDAnalysis>=2.5.0",
     "customtkinter>=5.2.0",
     "pillow>=10.0.0",
 ]
