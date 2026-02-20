@@ -1,0 +1,194 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tifr-work"
+version = "0.1.0"
+description = "Monte Carlo simulation suite for protein folding dynamics with VMD integration"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Vihaan Kulkarni", email = "vihaankulkarni29@example.com"}
+]
+keywords = ["monte-carlo", "protein-folding", "molecular-dynamics", "vmd", "simulation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# Core dependencies shared across all packages
+dependencies = [
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+]
+
+[project.optional-dependencies]
+# Dependencies for autosim_core (compute engine)
+core = [
+    "numba>=0.57.0",
+    "pandas>=2.0.0",
+    "h5py>=3.8.0",
+]
+
+# Dependencies for vmd_plugins (visualization and VMD integration)
+vmd = [
+    "matplotlib>=3.7.0",
+    "mdanalysis>=2.5.0",
+]
+
+# Dependencies for gui_frontend (GUI application)
+gui = [
+    "customtkinter>=5.2.0",
+    "pillow>=10.0.0",
+    "matplotlib>=3.7.0",
+]
+
+# Development dependencies
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.0",
+    "ruff>=0.1.0",
+    "black>=23.7.0",
+    "mypy>=1.5.0",
+    "pre-commit>=3.3.0",
+]
+
+# All optional dependencies combined
+all = [
+    "numba>=0.57.0",
+    "pandas>=2.0.0",
+    "h5py>=3.8.0",
+    "matplotlib>=3.7.0",
+    "mdanalysis>=2.5.0",
+    "customtkinter>=5.2.0",
+    "pillow>=10.0.0",
+]
+
+[project.scripts]
+autosim-gui = "gui_frontend.main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["autosim_core*", "vmd_plugins*", "gui_frontend*"]
+
+# ===== WORKSPACE CONFIGURATION =====
+# The three packages follow a strict dependency hierarchy to prevent circular dependencies:
+# 
+#   autosim_core      (Level 0: Core computation engine - no internal dependencies)
+#        ↑
+#        │
+#   vmd_plugins       (Level 1: Can depend on autosim_core)
+#        ↑
+#        │
+#   gui_frontend      (Level 2: Can depend on autosim_core and vmd_plugins)
+#
+# This ensures zero circular dependencies by design.
+
+# ===== TOOL CONFIGURATIONS =====
+
+[tool.ruff]
+# Enable pycodestyle (E), Pyflakes (F), and isort (I) rules
+select = ["E", "F", "I", "W", "N", "UP", "YTT", "ASYNC", "B", "C4", "DTZ", "T10", "ISC", "ICN", "G", "PIE", "PYI", "Q", "RSE", "RET", "SLF", "SIM", "TID", "TCH", "ARG", "PTH", "PD", "PGH", "PL", "TRY", "NPY", "RUF"]
+ignore = ["E501"]  # Line too long (handled by formatter)
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]  # Allow unused imports in __init__.py
+"tests/**/*.py" = ["ARG", "PLR2004"]  # Allow magic values in tests
+
+[tool.ruff.isort]
+known-first-party = ["autosim_core", "vmd_plugins", "gui_frontend"]
+force-sort-within-sections = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+strict_equality = true
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = [
+    "customtkinter.*",
+    "mdanalysis.*",
+    "numba.*",
+]
+ignore_missing_imports = true
+
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
