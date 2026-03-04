@@ -92,6 +92,14 @@ class VMDClient:
         If socket is disconnected or transmission fails, logs error and optionally
         raises exception.
         
+        CRITICAL: This method ALWAYS appends a newline character to the command.
+        The VMD Tcl server uses line-buffered mode (fconfigure -buffering line),
+        which means it waits for \\n to trigger command execution. Without the
+        newline, the Tcl server's gets command will block indefinitely.
+        
+        This is the "Newline Deadlock" pitfall: if the client sends a command
+        without \\n, the message vanishes into the buffer void.
+        
         Args:
             tcl_string: Valid TCL code string to execute in VMD
             
@@ -104,10 +112,15 @@ class VMDClient:
             raise ConnectionError(error_msg)
         
         try:
+            # CRITICAL: Append newline if not already present
+            # The Tcl server uses gets with line buffering, which requires \\n
+            if not tcl_string.endswith('\n'):
+                tcl_string = tcl_string + '\n'
+            
             # Encode TCL string to UTF-8 bytes and send
             tcl_bytes: bytes = tcl_string.encode('utf-8')
             self.socket.sendall(tcl_bytes)
-            logger.debug(f"Sent TCL command: {tcl_string[:80]}...")
+            logger.debug(f"Sent TCL command (with newline): {tcl_string[:80]}...")
         except (socket.error, OSError) as e:
             error_msg = f"Failed to send TCL command: {e}"
             logger.error(error_msg)
@@ -133,6 +146,10 @@ class VMDClient:
         
         The resulting 4x4 matrix is formatted as a TCL list of lists and sent
         to VMD via send_command().
+        
+        NOTE: The newline character required by the Tcl server's line-buffered
+        protocol is automatically appended by send_command(), so you don't
+        need to worry about it.
         
         Args:
             selection_text: VMD selection string (e.g., "chain A and resid 1:50")
