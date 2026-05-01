@@ -5,7 +5,7 @@ import warnings
 # Suppress warnings
 warnings.filterwarnings('ignore')
 
-n_atoms = 120000
+n_atoms = 80000  # Scaled down to kill Python, not the OS
 n_frames = 200
 
 print("===========================================")
