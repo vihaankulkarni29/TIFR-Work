@@ -37,7 +37,7 @@ run_test() {
     CONFIG=$4
 
     echo -e "\n======================================================="
-    echo "[Stage $STAGE/4] Executing $SCRIPT on $TARGET..."
+    echo "[Stage $STAGE/6] Executing $SCRIPT on $TARGET..."
     echo "======================================================="
     
     # Get the intended output filename from config
@@ -105,6 +105,8 @@ run_test 1 "cvcf.py" "Ubiquitin" "config_small.txt"
 run_test 2 "cvcf_stream.py" "Ubiquitin" "config_small.txt"
 run_test 3 "cvcf.py" "mTOR-Lite" "config_massive.txt"
 run_test 4 "cvcf_stream.py" "mTOR-Lite" "config_massive.txt"
+run_test 5 "cvcf_stream_ultra.py" "Ubiquitin" "config_small.txt"
+run_test 6 "cvcf_stream_ultra.py" "mTOR-Lite" "config_massive.txt"
 
 # 5. Output Final Results
 echo -e "\n=========================================================================================="
