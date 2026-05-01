@@ -13,7 +13,7 @@ pdbfile="ubiquitin.pdb"
 trjfile="ubiquitin.dcd"
 outfile="cvcf_output.txt"
 selection="name CA"
-align=true
+align=false
 verbose=false
 EOF
 
